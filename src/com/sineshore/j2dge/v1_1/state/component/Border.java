@@ -2,7 +2,7 @@ package com.sineshore.j2dge.v1_1.state.component;
 
 import java.awt.Color;
 
-import com.sineshore.j2dge.v1_1.Renderer;
+import com.sineshore.j2dge.v1_1.graphics.Renderer;
 
 public class Border {
 

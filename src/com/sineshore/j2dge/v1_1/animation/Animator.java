@@ -2,8 +2,6 @@ package com.sineshore.j2dge.v1_1.animation;
 
 import java.awt.image.BufferedImage;
 
-import com.sineshore.j2dge.v1_1.SpriteSheet;
-
 public class Animator {
 
 	private SpriteSheet sheet;

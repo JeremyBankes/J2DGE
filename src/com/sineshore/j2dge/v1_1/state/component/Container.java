@@ -2,9 +2,9 @@ package com.sineshore.j2dge.v1_1.state.component;
 
 import java.util.LinkedList;
 
-import com.sineshore.j2dge.v1_1.KeyInput.KeyInputEvent;
-import com.sineshore.j2dge.v1_1.MouseInput.MouseInputEvent;
-import com.sineshore.j2dge.v1_1.Renderer;
+import com.sineshore.j2dge.v1_1.graphics.Renderer;
+import com.sineshore.j2dge.v1_1.input.KeyInput.KeyInputEvent;
+import com.sineshore.j2dge.v1_1.input.MouseInput.MouseInputEvent;
 
 public class Container extends Component {
 

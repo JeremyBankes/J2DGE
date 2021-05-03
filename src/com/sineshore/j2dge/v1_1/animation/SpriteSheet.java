@@ -1,4 +1,4 @@
-package com.sineshore.j2dge.v1_1;
+package com.sineshore.j2dge.v1_1.animation;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -18,7 +18,8 @@ public class SpriteSheet {
 		count = spritesAcross * spritesDown - emptySlots;
 		for (int y = 0; y < spritesDown; y++) {
 			for (int x = 0; x < (y == spritesDown - 1 ? spritesAcross - emptySlots : spritesAcross); x++) {
-				BufferedImage newSprite = source.getSubimage(x * spriteWidth, y * spriteHeight, spriteWidth, spriteHeight);
+				BufferedImage newSprite = source.getSubimage(x * spriteWidth, y * spriteHeight, spriteWidth,
+						spriteHeight);
 				sprites.add(newSprite);
 			}
 		}
@@ -30,7 +31,8 @@ public class SpriteSheet {
 		spriteHeight = images[0].getHeight();
 		for (BufferedImage image : images) {
 			if (image.getWidth() != spriteWidth || image.getHeight() != spriteHeight) {
-				throw new IllegalStateException("created sprite sheet out of an Image array with images of different sizes");
+				throw new IllegalStateException(
+						"created sprite sheet out of an Image array with images of different sizes");
 			}
 			sprites.add(image);
 		}

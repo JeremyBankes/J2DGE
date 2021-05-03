@@ -1,4 +1,4 @@
-package com.sineshore.j2dge.v1_1;
+package com.sineshore.j2dge.v1_1.input;
 
 import java.util.HashMap;
 
@@ -39,7 +39,8 @@ public class ControlsManager extends HashMap<String, Integer> {
 	}
 
 	public boolean isMovementKey(int asciiCode) {
-		return get("move-up") == asciiCode || get("move-right") == asciiCode || get("move-down") == asciiCode || get("move-left") == asciiCode;
+		return get("move-up") == asciiCode || get("move-right") == asciiCode || get("move-down") == asciiCode
+				|| get("move-left") == asciiCode;
 	}
 
 	public boolean isSprint() {

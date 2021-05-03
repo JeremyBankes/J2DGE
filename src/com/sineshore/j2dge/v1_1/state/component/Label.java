@@ -1,6 +1,6 @@
 package com.sineshore.j2dge.v1_1.state.component;
 
-import com.sineshore.j2dge.v1_1.Renderer;
+import com.sineshore.j2dge.v1_1.graphics.Renderer;
 
 public class Label extends Component {
 

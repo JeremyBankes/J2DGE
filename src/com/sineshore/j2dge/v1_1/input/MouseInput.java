@@ -1,4 +1,4 @@
-package com.sineshore.j2dge.v1_1;
+package com.sineshore.j2dge.v1_1.input;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;
@@ -38,33 +38,38 @@ public class MouseInput {
 
 			@Override
 			public void mousePressed(MouseEvent event) {
-				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.PRESS, event.getX() - xOffset, event.getY() - yOffset);
+				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.PRESS, event.getX() - xOffset,
+						event.getY() - yOffset);
 				mouseCallbacks.forEach(callback -> callback.invoke(newEvent));
 				pressed.add(event.getButton());
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent event) {
-				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.RELEASE, event.getX() - xOffset, event.getY() - yOffset);
+				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.RELEASE, event.getX() - xOffset,
+						event.getY() - yOffset);
 				mouseCallbacks.forEach(callback -> callback.invoke(newEvent));
 				pressed.remove(event.getButton());
 			}
 
 			@Override
 			public void mouseExited(MouseEvent event) {
-				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.EXIT, event.getX() - xOffset, event.getY() - yOffset);
+				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.EXIT, event.getX() - xOffset,
+						event.getY() - yOffset);
 				mouseCallbacks.forEach(callback -> callback.invoke(newEvent));
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent event) {
-				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.ENTER, event.getX() - xOffset, event.getY() - yOffset);
+				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.ENTER, event.getX() - xOffset,
+						event.getY() - yOffset);
 				mouseCallbacks.forEach(callback -> callback.invoke(newEvent));
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent event) {
-				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.CLICK, event.getX() - xOffset, event.getY() - yOffset);
+				MouseInputEvent newEvent = new MouseInputEvent(MouseAction.CLICK, event.getX() - xOffset,
+						event.getY() - yOffset);
 				mouseCallbacks.forEach(callback -> callback.invoke(newEvent));
 			}
 		});
@@ -72,7 +77,8 @@ public class MouseInput {
 		component.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
-				mouseCallbacks.forEach(callback -> callback.invoke(new MouseInputEvent(MouseAction.SCROLL, 0, event.getWheelRotation())));
+				mouseCallbacks.forEach(callback -> callback
+						.invoke(new MouseInputEvent(MouseAction.SCROLL, 0, event.getWheelRotation())));
 			}
 		});
 	}

@@ -1,4 +1,4 @@
-package com.sineshore.j2dge.v1_1;
+package com.sineshore.j2dge.v1_1.graphics;
 
 public class DefaultCamera implements Camera {
 

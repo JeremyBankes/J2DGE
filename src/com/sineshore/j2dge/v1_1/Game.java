@@ -11,6 +11,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Random;
 
+import com.sineshore.j2dge.v1_1.graphics.Renderer;
+import com.sineshore.j2dge.v1_1.graphics.Window;
+import com.sineshore.j2dge.v1_1.input.ControlsManager;
+import com.sineshore.j2dge.v1_1.input.KeyInput;
+import com.sineshore.j2dge.v1_1.input.MouseInput;
 import com.sineshore.j2dge.v1_1.state.StateManager;
 
 public abstract class Game {

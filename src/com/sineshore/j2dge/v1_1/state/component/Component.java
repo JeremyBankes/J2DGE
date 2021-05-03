@@ -8,10 +8,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import com.sineshore.j2dge.v1_1.KeyInput.KeyInputEvent;
-import com.sineshore.j2dge.v1_1.MouseInput.MouseAction;
-import com.sineshore.j2dge.v1_1.MouseInput.MouseInputEvent;
-import com.sineshore.j2dge.v1_1.Renderer;
+import com.sineshore.j2dge.v1_1.graphics.Renderer;
+import com.sineshore.j2dge.v1_1.input.KeyInput.KeyInputEvent;
+import com.sineshore.j2dge.v1_1.input.MouseInput.MouseAction;
+import com.sineshore.j2dge.v1_1.input.MouseInput.MouseInputEvent;
 
 public class Component {
 

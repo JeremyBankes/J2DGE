@@ -12,13 +12,11 @@ import javax.imageio.ImageIO;
 public class J2DGE {
 
 	public static Color mix(Color color1, Color color2, float ratio) {
-		return new Color(
-
+		return new Color( //
 				(int) (color1.getRed() * (1f - ratio) + color2.getRed() * ratio), //
 				(int) (color1.getGreen() * (1f - ratio) + color2.getGreen() * ratio), //
 				(int) (color1.getBlue() * (1f - ratio) + color2.getBlue() * ratio), //
 				(int) (color1.getAlpha() * (1f - ratio) + color2.getAlpha() * ratio)//
-
 		);
 	}
 

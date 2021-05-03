@@ -1,4 +1,4 @@
-package com.sineshore.j2dge.v1_1;
+package com.sineshore.j2dge.v1_1.graphics;
 
 import static java.awt.RenderingHints.*;
 
@@ -45,7 +45,8 @@ public class Renderer {
 	@SuppressWarnings("unchecked")
 	public Renderer(Canvas canvas) {
 		this.canvas = canvas;
-		rendereringHints = (Map<Object, Object>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+		rendereringHints = (Map<Object, Object>) Toolkit.getDefaultToolkit()
+				.getDesktopProperty("awt.font.desktophints");
 		rendereringHints.put(KEY_INTERPOLATION, VALUE_INTERPOLATION_BILINEAR);
 		rendereringHints.put(KEY_TEXT_ANTIALIASING, VALUE_TEXT_ANTIALIAS_ON);
 		rendereringHints.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
@@ -88,7 +89,7 @@ public class Renderer {
 		resizeCallbacks.remove(callback);
 	}
 
-	void startRender() {
+	public void startRender() {
 		while (strategy == null && canvas.isValid()) {
 			canvas.createBufferStrategy(2);
 			strategy = canvas.getBufferStrategy();
@@ -98,7 +99,7 @@ public class Renderer {
 		g.clearRect(0, 0, getWidth(), getHeight());
 	}
 
-	void endRender() {
+	public void endRender() {
 		g.dispose();
 		strategy.show();
 	}
@@ -362,7 +363,7 @@ public class Renderer {
 		window.setVisible(true);
 	}
 
-	void setAspectRatio(float aspectRatio) {
+	public void setAspectRatio(float aspectRatio) {
 		this.aspectRatio = aspectRatio;
 	}
 

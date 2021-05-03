@@ -3,9 +3,9 @@ package com.sineshore.j2dge.v1_1.state;
 import java.util.HashMap;
 
 import com.sineshore.j2dge.v1_1.Game;
-import com.sineshore.j2dge.v1_1.KeyInput;
-import com.sineshore.j2dge.v1_1.MouseInput;
-import com.sineshore.j2dge.v1_1.Renderer;
+import com.sineshore.j2dge.v1_1.graphics.Renderer;
+import com.sineshore.j2dge.v1_1.input.KeyInput;
+import com.sineshore.j2dge.v1_1.input.MouseInput;
 
 public class StateManager {
 
