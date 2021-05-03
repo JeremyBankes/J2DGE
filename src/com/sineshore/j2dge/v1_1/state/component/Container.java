@@ -1,10 +1,10 @@
-package com.sineshore.j2dge.v1_0.state.component;
+package com.sineshore.j2dge.v1_1.state.component;
 
 import java.util.LinkedList;
 
-import com.sineshore.j2dge.v1_0.KeyInput.KeyInputEvent;
-import com.sineshore.j2dge.v1_0.MouseInput.MouseInputEvent;
-import com.sineshore.j2dge.v1_0.Renderer;
+import com.sineshore.j2dge.v1_1.KeyInput.KeyInputEvent;
+import com.sineshore.j2dge.v1_1.MouseInput.MouseInputEvent;
+import com.sineshore.j2dge.v1_1.Renderer;
 
 public class Container extends Component {
 
@@ -26,11 +26,11 @@ public class Container extends Component {
 	@Override
 	public void keyEvent(KeyInputEvent event) {
 		super.keyEvent(event);
-		for (Component child : children) {
+		children.iterator().forEachRemaining(child -> {
 			if (!event.isConsumed()) {
 				child.keyEvent(event);
 			}
-		}
+		});
 	}
 
 	@Override

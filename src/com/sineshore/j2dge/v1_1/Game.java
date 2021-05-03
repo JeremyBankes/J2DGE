@@ -1,15 +1,17 @@
-package com.sineshore.j2dge.v1_0;
+package com.sineshore.j2dge.v1_1;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Random;
 
-import com.sineshore.j2dge.v1_0.state.StateManager;
+import com.sineshore.j2dge.v1_1.state.StateManager;
 
 public abstract class Game {
 
@@ -31,7 +33,10 @@ public abstract class Game {
 	protected final Renderer renderer;
 	protected final MouseInput mouseInput;
 	protected final KeyInput keyInput;
+	protected final ControlsManager controlsManager;
 	protected final StateManager stateManager;
+
+	protected final Random random = new Random();
 
 	public Game(String name, String version, int width, int height) {
 		this.name = name;
@@ -43,7 +48,8 @@ public abstract class Game {
 		window.getContentPane().add(canvas);
 		mouseInput = new MouseInput(canvas);
 		keyInput = new KeyInput(canvas);
-		stateManager = new StateManager(this, keyInput, mouseInput);
+		controlsManager = new ControlsManager(keyInput);
+		stateManager = new StateManager(this);
 		renderer.setAspectRatio((float) width / height);
 		window.getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		window.getContentPane().addComponentListener(new ComponentAdapter() {
@@ -88,52 +94,74 @@ public abstract class Game {
 		}
 	}
 
-	protected abstract void init();
+	protected void init() {
+		window.pack();
+		Insets insets = window.getInsets();
+		int minWidth = 100 + insets.left + insets.right;
+		int minHeight = (int) (100 / renderer.getAspectRatio() + insets.top + insets.bottom);
+		window.setMinimumSize(new Dimension(minWidth, minHeight));
+		window.center();
+		window.setVisible(true);
+	}
 
-	protected abstract void term();
+	protected void term() {
+		window.dispose();
+	}
 
 	private void run() {
-		init();
-		long currentTime;
-		final long second = 1000000000;
-		int ticks = 0;
-		int frames = 0;
-		long tickTime = second / getTps();
-		long tickTimer = System.nanoTime();
-		long secondTimer = System.nanoTime();
-		long frameTime = getMaxFps() == 0 ? 0 : second / getMaxFps();
-		long frameTimer = System.nanoTime();
-		while (running) {
-			currentTime = System.nanoTime();
-			if (currentTime - tickTimer > tickTime) {
-				if (currentTime - tickTimer > tickTime * 2) {
-					tickTimer = currentTime;
+		try {
+			init();
+			long currentTime;
+			final long second = 1000000000;
+			int ticks = 0;
+			int frames = 0;
+			long tickTime = second / getTps();
+			long tickTimer = System.nanoTime();
+			long secondTimer = System.nanoTime();
+			long frameTime = getMaxFps() == 0 ? 0 : second / getMaxFps();
+			long frameTimer = System.nanoTime();
+			while (running) {
+				currentTime = System.nanoTime();
+				if (currentTime - tickTimer > tickTime) {
+					if (currentTime - tickTimer > tickTime * 2) {
+						tickTimer = currentTime;
+					}
+					tickTimer += tickTime;
+					ticks++;
+					age++;
+					tick();
 				}
-				tickTimer += tickTime;
-				ticks++;
-				age++;
-				tick();
+				if (currentTime - frameTimer > frameTime) {
+					frameTimer += frameTime;
+					frames++;
+					renderer.startRender();
+					render(renderer);
+					renderer.endRender();
+				}
+				if (currentTime - secondTimer > second) {
+					secondTimer += second;
+					currentFps = frames;
+					currentTps = ticks;
+					frames = ticks = 0;
+				}
 			}
-			if (currentTime - frameTimer > frameTime) {
-				frameTimer += frameTime;
-				frames++;
-				renderer.startRender();
-				render(renderer);
-				renderer.endRender();
-			}
-			if (currentTime - secondTimer > second) {
-				secondTimer += second;
-				currentFps = frames;
-				currentTps = ticks;
-				frames = ticks = 0;
-			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
 		}
 		term();
 	}
 
-	public abstract void tick();
+	public void tick() {
+		stateManager.getCurrentState().tick();
+	}
 
-	public abstract void render(Renderer renderer);
+	public void render(Renderer renderer) {
+		stateManager.getCurrentState().render(renderer);
+	}
+
+	public Random getRandom() {
+		return random;
+	}
 
 	public int getTps() {
 		return tps;
@@ -181,6 +209,10 @@ public abstract class Game {
 
 	public KeyInput getKeyInput() {
 		return keyInput;
+	}
+
+	public ControlsManager getControls() {
+		return controlsManager;
 	}
 
 	public StateManager getStateManager() {

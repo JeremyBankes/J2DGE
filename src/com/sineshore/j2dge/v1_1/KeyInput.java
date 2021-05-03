@@ -1,4 +1,4 @@
-package com.sineshore.j2dge.v1_0;
+package com.sineshore.j2dge.v1_1;
 
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
@@ -24,33 +24,57 @@ public class KeyInput {
 
 		component.addKeyListener(new KeyListener() {
 			@Override
-			public void keyTyped(KeyEvent event) {
-				keyCallbacks
-						.forEach(callback -> callback.invoke(new KeyInputEvent(KeyAction.TYPE, event.getKeyChar())));
-			}
-
-			@Override
-			public void keyReleased(KeyEvent event) {
-				keyCallbacks
-						.forEach(callback -> callback.invoke(new KeyInputEvent(KeyAction.RELEASE, event.getKeyCode())));
-				if (pressed.contains(event.getKeyCode())) {
-					pressed.remove(event.getKeyCode());
+			public void keyTyped(KeyEvent awtEvent) {
+				String modifiers = KeyEvent.getKeyModifiersText(awtEvent.getModifiers()).toLowerCase();
+				KeyInputEvent event = new KeyInputEvent(KeyAction.TYPE, awtEvent.getKeyChar(), modifiers);
+				for (KeyEventCallback callback : keyCallbacks) {
+					if (event.isConsumed()) {
+						break;
+					}
+					callback.invoke(event);
 				}
 			}
 
 			@Override
-			public void keyPressed(KeyEvent event) {
-				int ascii = event.getKeyCode();
-				keyCallbacks.forEach(callback -> callback.invoke(new KeyInputEvent(KeyAction.PRESS, ascii)));
+			public void keyReleased(KeyEvent awtEvent) {
+				if (pressed.contains(awtEvent.getKeyCode())) {
+					pressed.remove(awtEvent.getKeyCode());
+				}
+				String modifers = KeyEvent.getKeyModifiersText(awtEvent.getModifiers());
+				KeyInputEvent event = new KeyInputEvent(KeyAction.RELEASE, awtEvent.getKeyCode(), modifers);
+				for (KeyEventCallback callback : keyCallbacks) {
+					if (event.isConsumed()) {
+						break;
+					}
+					callback.invoke(event);
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent awtEvent) {
+				int ascii = awtEvent.getKeyCode();
+				String modifiers = KeyEvent.getKeyModifiersText(awtEvent.getModifiers());
+				KeyInputEvent event = new KeyInputEvent(KeyAction.DOUBLE_TAP, ascii, modifiers);
 				if (!pressed.contains(ascii)) {
 					pressed.add(ascii);
 					if (doubleTaps.containsKey(ascii)) {
 						if (System.currentTimeMillis() - doubleTaps.get(ascii) <= DOUBLE_TAP_THRESHOLD) {
-							keyCallbacks.forEach(
-									callback -> callback.invoke(new KeyInputEvent(KeyAction.DOUBLE_TAP, ascii)));
+							for (KeyEventCallback callback : keyCallbacks) {
+								if (event.isConsumed()) {
+									break;
+								}
+								callback.invoke(event);
+							}
 						}
 					}
 					doubleTaps.put(ascii, System.currentTimeMillis());
+				}
+				event = new KeyInputEvent(KeyAction.PRESS, ascii, modifiers);
+				for (KeyEventCallback callback : keyCallbacks) {
+					if (event.isConsumed()) {
+						break;
+					}
+					callback.invoke(event);
 				}
 			}
 		});
@@ -107,12 +131,14 @@ public class KeyInput {
 
 		public final KeyAction action;
 		public final int asciiCode;
+		public final String modifiers;
 
 		private boolean consumed;
 
-		public KeyInputEvent(KeyAction action, int asciiCode) {
+		public KeyInputEvent(KeyAction action, int asciiCode, String modifiers) {
 			this.action = action;
 			this.asciiCode = asciiCode;
+			this.modifiers = modifiers.toLowerCase();
 		}
 
 		public boolean isConsumed() {

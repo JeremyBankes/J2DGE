@@ -1,4 +1,4 @@
-package com.sineshore.j2dge.v1_0;
+package com.sineshore.j2dge.v1_1;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

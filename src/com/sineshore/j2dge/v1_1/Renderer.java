@@ -1,16 +1,17 @@
-package com.sineshore.j2dge.v1_0;
+package com.sineshore.j2dge.v1_1;
 
-import static java.awt.RenderingHints.KEY_TEXT_ANTIALIASING;
-import static java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
+import static java.awt.RenderingHints.*;
 
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints.Key;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -33,16 +34,23 @@ public class Renderer {
 
 	private HashMap<FontKey, Font> derivedFonts;
 
+	private HashMap<Class<? extends Camera>, Camera> cameras;
+
 	private HashSet<RendererResizeCallback> resizeCallbacks;
 
 	private Dimension priorToFullscreen;
 
+	private AffineTransform savedTransform;
+
 	@SuppressWarnings("unchecked")
 	public Renderer(Canvas canvas) {
 		this.canvas = canvas;
-		rendereringHints = (Map<Object, Object>) Toolkit.getDefaultToolkit()
-				.getDesktopProperty("awt.font.desktophints");
+		rendereringHints = (Map<Object, Object>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+		rendereringHints.put(KEY_INTERPOLATION, VALUE_INTERPOLATION_BILINEAR);
 		rendereringHints.put(KEY_TEXT_ANTIALIASING, VALUE_TEXT_ANTIALIAS_ON);
+		rendereringHints.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
+		rendereringHints.put(KEY_FRACTIONALMETRICS, VALUE_FRACTIONALMETRICS_ON);
+		cameras = new HashMap<>();
 		derivedFonts = new HashMap<>();
 		resizeCallbacks = new HashSet<>();
 
@@ -55,6 +63,21 @@ public class Renderer {
 			}
 
 		});
+
+		registerCamera(new DefaultCamera(this));
+		useCamera(DefaultCamera.class);
+	}
+
+	public void registerCamera(Camera camera) {
+		cameras.put(camera.getClass(), camera);
+	}
+
+	public void useCamera(Class<? extends Camera> cameraClass) {
+		this.camera = cameras.get(cameraClass);
+	}
+
+	public <T extends Camera> T getCamera(Class<T> cameraClass) {
+		return cameraClass.cast(cameras.get(cameraClass));
 	}
 
 	public void addResizeCallback(RendererResizeCallback callback) {
@@ -72,7 +95,7 @@ public class Renderer {
 		}
 		g = (Graphics2D) strategy.getDrawGraphics();
 		g.setRenderingHints(rendereringHints);
-
+		g.clearRect(0, 0, getWidth(), getHeight());
 	}
 
 	void endRender() {
@@ -88,12 +111,28 @@ public class Renderer {
 		g.setColor(color);
 	}
 
+	public void saveTransform() {
+		savedTransform = new AffineTransform(g.getTransform());
+	}
+
+	public void setTransform(AffineTransform transform) {
+		g.setTransform(transform);
+	}
+
+	public void loadTransform() {
+		g.setTransform(savedTransform);
+	}
+
 	public int getWidth() {
 		return canvas.getWidth();
 	}
 
 	public int getHeight() {
 		return canvas.getHeight();
+	}
+
+	public Font getFont() {
+		return g.getFont();
 	}
 
 	public void setFont(Font font) {
@@ -104,8 +143,8 @@ public class Renderer {
 		return camera;
 	}
 
-	public void setCamera(Camera camera) {
-		this.camera = camera;
+	public void setRenderingHint(Key key, Object value) {
+		g.setRenderingHint(key, value);
 	}
 
 	public void drawLine(int x0, int y0, int x1, int y1) {
@@ -140,15 +179,15 @@ public class Renderer {
 		);
 	}
 
-	public void fillRectangle(int x, int y, int width, int height) {
+	public void drawRectangle(int x, int y, int width, int height) {
 		g.fillRect(x, y, width, height);
 	}
 
-	public void fillRectangle(float x, float y, float width, float height) {
+	public void drawRectangle(float x, float y, float width, float height) {
 		if (camera == null) {
 			throw new IllegalStateException("No camera is defined.");
 		}
-		fillRectangle( //
+		drawRectangle( //
 				camera.transformX(x), //
 				camera.transformY(y), //
 				camera.transformWidth(width), //
@@ -172,15 +211,15 @@ public class Renderer {
 		);
 	}
 
-	public void fillOval(int x, int y, int width, int height) {
+	public void drawOval(int x, int y, int width, int height) {
 		g.fillOval(x, y, width, height);
 	}
 
-	public void fillOval(float x, float y, float width, float height) {
+	public void drawOval(float x, float y, float width, float height) {
 		if (camera == null) {
 			throw new IllegalStateException("No camera is defined.");
 		}
-		fillOval( //
+		drawOval( //
 				camera.transformX(x), //
 				camera.transformY(y), //
 				camera.transformWidth(width), //
@@ -288,7 +327,7 @@ public class Renderer {
 	}
 
 	public int getTextWidth(String text, Font font) {
-		return g.getFontMetrics(font).stringWidth(text.replaceAll("&[A-z0-9]", ""));
+		return g.getFontMetrics(font).stringWidth(text);
 	}
 
 	public float getTextWidthPercent(String text, Font font) {
